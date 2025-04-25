@@ -10,13 +10,13 @@ int main() {
     int gpio_number = 3;
     float humidity = 0;
     float temperature = 0;
-    int ch;
 
     initscr();              // Start ncurses mode
     cbreak();               // Disable line buffering
     noecho();               // Don't echo keypresses
     curs_set(0);            // Hide cursor
     keypad(stdscr, TRUE);   // Enable arrow keys and function keys
+    timeout(1000);          // Set the screen refresh time to 1000ms (1 second)
 
     curl_global_init(CURL_GLOBAL_ALL);
 
@@ -25,11 +25,11 @@ int main() {
 
         clear();
         box(stdscr, 0, 0);
-        mvprintw(1, 2, "BeagleBone Sensor Monitor");
+        mvprintw(1, 2, "BeagleBone DHT11 Sensor Monitor");
         mvprintw(3, 4, "Result: %d", result);
         mvprintw(4, 4, "Humidity: %.2f%%", humidity);
         mvprintw(5, 4, "Temperature: %.2f°C", temperature);
-        mvprintw(7, 4, "[R] Refresh   [Q] Quit");
+        mvprintw(7, 4, "[Refreshing every second]");
 
         refresh();
 
@@ -50,13 +50,6 @@ int main() {
 
             curl_slist_free_all(headers);
             curl_easy_cleanup(curl);
-        }
-
-        ch = getch();
-        if (ch == 'q' || ch == 'Q') break;
-        if (ch == 'r' || ch == 'R') {
-            // Simulate refresh on key press
-            // The loop will continue updating the data
         }
 
         sleep(1);
