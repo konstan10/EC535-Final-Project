@@ -7,13 +7,13 @@ int main() {
     int type = DHT11;
     int gpio_base = 2;
     int gpio_number = 3;
-    float humidity = 66.6;
-    float temperature = 420.69;
+    float humidity = 0;
+    float temperature = 0;
 
     curl_global_init(CURL_GLOBAL_ALL);
 
     while (1) {
-        // int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
+        int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
 
         printf("Result: %d\n", result);
         printf("Humidity: %.2f%%, Temperature: %.2f°C\n", humidity, temperature);
