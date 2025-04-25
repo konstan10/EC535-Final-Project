@@ -12,10 +12,10 @@ DEPS    := bbb_dht_read.h bbb_mmio.h common_dht_read.h
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-                $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c $(DEPS)
-                $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-                rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET)
