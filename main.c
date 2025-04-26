@@ -51,7 +51,7 @@ int main() {
         draw_border();
 
         attron(COLOR_PAIR(1) | A_BOLD);
-        mvprintw(1, 4, "🌡️  BeagleBone DHT11 Sensor Monitor");
+        mvprintw(1, 4, "BeagleBone DHT11 Sensor Monitor");
         attroff(COLOR_PAIR(1) | A_BOLD);
 
         attron(COLOR_PAIR(5));
@@ -73,7 +73,7 @@ int main() {
         } else {
             attron(COLOR_PAIR(2));
         }
-        printw("%.2f °C", temperature);
+        printw("%.2f deg C", temperature);
         attroff(COLOR_PAIR(2) | COLOR_PAIR(3) | A_BOLD);
 
         attron(COLOR_PAIR(1));
