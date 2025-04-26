@@ -55,7 +55,7 @@ int main() {
         mvprintw(5, 17, "%6.2f deg C", temperature);
         attroff(COLOR_PAIR(3));
 
-        wnoutrefresh();
+        wnoutrefresh(stdscr);
         doupdate();
 
         CURL *curl = curl_easy_init();
