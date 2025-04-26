@@ -48,11 +48,11 @@ int main() {
         attroff(COLOR_PAIR(4));
 
         attron(COLOR_PAIR(2));
-        mvprintw(4, 14, "%6.2f %% ", humidity);
+        mvprintw(4, 14, "%6d %% ", (int)humidity);
         attroff(COLOR_PAIR(2));
 
         attron(COLOR_PAIR(3));
-        mvprintw(5, 17, "%6.2f deg C", temperature);
+        mvprintw(5, 17, "%6d deg C", (int)temperature);
         attroff(COLOR_PAIR(3));
 
         wnoutrefresh(stdscr);
