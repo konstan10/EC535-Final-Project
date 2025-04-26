@@ -31,7 +31,7 @@ int main() {
     erase();
     box(stdscr, 0, 0);
     attron(COLOR_PAIR(1) | A_BOLD);
-    mvprintw(1, 4, "BeagleBone DHT11 Sensor Monitor");
+    mvprintw(1, 4, "BeagleBone Black Smart Environment Monitor");
     attroff(COLOR_PAIR(1) | A_BOLD);
 
     mvprintw(3, 4, "Result:");

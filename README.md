@@ -1,0 +1,3 @@
+- Add button to switch between fahrenheit and celsius, or show both
+- Add heat/comfort index showing how comfortable room is
+- 
