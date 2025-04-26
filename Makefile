@@ -1,6 +1,6 @@
 CC      := gcc
-CFLAGS  := -g -Wall `sdl2-config --cflags`
-LDFLAGS := `sdl2-config --libs` -lSDL2_ttf -lcurl
+CFLAGS  := -g -Wall
+LDFLAGS := -lcurl -lncurses
 
 TARGET  := final_project
 SRCS    := main.c bbb_dht_read.c bbb_mmio.c common_dht_read.c
