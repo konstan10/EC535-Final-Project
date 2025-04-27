@@ -50,7 +50,7 @@ void *send_data(SensorData *data) {
 
         curl_easy_setopt(curl, CURLOPT_URL, "https://fast-kid-sterling.ngrok-free.app/data");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);
-        null_file = fopen("/dev/null", "w");
+        FILE* null_file = fopen("/dev/null", "w");
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, null_file);
 
         struct curl_slist *headers = NULL;
