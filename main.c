@@ -82,7 +82,7 @@ int main() {
         attroff(COLOR_PAIR(2));
 
         attron(COLOR_PAIR(3));
-        mvprintw(5, 15, "%6.1f deg %s", temp_display, unit);
+        mvprintw(5, 17, "%4.1f deg %s", temp_display, unit);
         attroff(COLOR_PAIR(3));
 
         refresh();
