@@ -13,9 +13,6 @@
 
 int read_button() {
     int fd = open(UNIT_BUTTON_GPIO, O_RDONLY);
-    if (fd < 0) {
-        return -1;
-    }
     char value;
     read(fd, &value, 1);
     close(fd);
@@ -45,6 +42,19 @@ int main() {
 
     curl_global_init(CURL_GLOBAL_ALL);
 
+    erase();
+    box(stdscr, 0, 0);
+    attron(COLOR_PAIR(1));
+    mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
+
+    mvprintw(3, 4, "Result:");
+    mvprintw(4, 4, "Humidity:");
+    mvprintw(5, 4, "Temperature:");
+
+    mvprintw(7, 4, "[Refreshing every second]");
+    attroff(COLOR_PAIR(1));
+    refresh();
+
     while (1) {
         int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
 
@@ -59,30 +69,21 @@ int main() {
         if (disp_fahr) {
             temp_display = temperature * 9.0 / 5.0 + 32.0;
             strcpy(unit, "F");
-        }
-        else {
+        } else {
             strcpy(unit, "C");
         }
 
-        clear();
-        box(stdscr, 0, 0);
-        attron(COLOR_PAIR(1));
-        mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
-
         attron(COLOR_PAIR(4));
-        mvprintw(3, 4, "Result:        %d", result);
+        mvprintw(3, 15, "%d   ", result);
         attroff(COLOR_PAIR(4));
 
         attron(COLOR_PAIR(2));
-        mvprintw(4, 4, "Humidity:      %d %%", (int)humidity);
+        mvprintw(4, 15, "%d %% ", (int)humidity);
         attroff(COLOR_PAIR(2));
 
         attron(COLOR_PAIR(3));
-        mvprintw(5, 4, "Temperature:   %.1f deg %s", temp_display, unit);
+        mvprintw(5, 15, "%.1f deg %s", temp_display, unit);
         attroff(COLOR_PAIR(3));
-
-        mvprintw(7, 4, "[Refreshing every second]");
-        attroff(COLOR_PAIR(1));
 
         refresh();
 
