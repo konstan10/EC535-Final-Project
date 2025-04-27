@@ -69,7 +69,6 @@ int main() {
     int gpio_base = 2;
     int gpio_number = 3;
 
-    int last_button_state = 0;
     float humidity = 0;
     float temperature = 0;
 
