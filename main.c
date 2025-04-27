@@ -74,15 +74,15 @@ int main() {
         }
 
         attron(COLOR_PAIR(4));
-        mvprintw(3, 15, "%d   ", result);
+        mvprintw(3, 15, "%3d   ", result);
         attroff(COLOR_PAIR(4));
 
         attron(COLOR_PAIR(2));
-        mvprintw(4, 15, "%d %% ", (int)humidity);
+        mvprintw(4, 15, "%3d %% ", (int)humidity);
         attroff(COLOR_PAIR(2));
 
         attron(COLOR_PAIR(3));
-        mvprintw(5, 15, "%.1f deg %s", temp_display, unit);
+        mvprintw(5, 15, "%5.1f deg %s", temp_display, unit);
         attroff(COLOR_PAIR(3));
 
         refresh();
