@@ -17,6 +17,10 @@ typedef struct {
     char unit[2];
 } SensorData;
 
+int curr_button_state = 0;
+int last_button_state = 0;
+volatile int disp_fahr = 0;
+
 int read_button() {
     int fd = open(UNIT_BUTTON_GPIO, O_RDONLY);
     char value;
@@ -24,6 +28,18 @@ int read_button() {
     close(fd);
     return (value == '0') ? 0 : 1;
 }
+
+void *poll_button_state() {
+    while (1) {
+        curr_button_state = read_button();
+        if (last_button_state == 1 && curr_button_state == 0) {
+            disp_fahr = !disp_fahr;
+        }
+        last_button_state = curr_button_state;
+        usleep(100000);
+    }
+}
+
 void *send_data(SensorData *data) {
     CURL *curl = curl_easy_init();
     if (curl) {
@@ -46,17 +62,20 @@ void *send_data(SensorData *data) {
     }
 
     free(data);
-    return NULL;
 }
 
 int main() {
     int type = DHT11;
     int gpio_base = 2;
     int gpio_number = 3;
+
+    int last_button_state = 0;
     float humidity = 0;
     float temperature = 0;
-    int disp_fahr = 0;
-    int last_button_state = 0;
+
+    pthread_t button_thread;
+    pthread_create(&button_thread, NULL, poll_button_state, NULL);
+    pthread_detach(button_thread);
 
     initscr();
     cbreak();
@@ -95,12 +114,6 @@ int main() {
             sleep(1);
             continue;
         }
-
-        int button_state = read_button();
-        if (button_state == 0 && last_button_state == 1) {
-            disp_fahr = !disp_fahr;
-        }
-        last_button_state = button_state;
 
         float temp_display = temperature;
         char unit[2];
