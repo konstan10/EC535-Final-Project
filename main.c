@@ -45,7 +45,7 @@ int main() {
 
     erase();
     box(stdscr, 0, 0);
-    attron(COLOR_PAIR(1));
+    attron(COLOR_PAIR(5));
     mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
 
     mvprintw(3, 4, "Result:");
