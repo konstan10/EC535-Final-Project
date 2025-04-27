@@ -91,6 +91,11 @@ int main() {
     while (1) {
         int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
 
+        if (result != 0) {
+            sleep(1);
+            continue;
+        }
+
         int button_state = read_button();
         if (button_state == 0 && last_button_state == 1) {
             disp_fahr = !disp_fahr;
