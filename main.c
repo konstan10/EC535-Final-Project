@@ -46,7 +46,9 @@ int main() {
     erase();
     box(stdscr, 0, 0);
     attron(COLOR_PAIR(5));
+    attron(COLOR_PAIR(5));
     mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
+    attroff(COLOR_PAIR(5));
 
     mvprintw(3, 4, "Result:");
     mvprintw(4, 4, "Humidity:");
