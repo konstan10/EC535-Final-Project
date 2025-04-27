@@ -11,12 +11,42 @@
 
 #define UNIT_BUTTON_GPIO "/sys/class/gpio/gpio66/value"
 
+typedef struct {
+    float humidity;
+    float temperature;
+    char unit[2];
+} SensorData;
+
 int read_button() {
     int fd = open(UNIT_BUTTON_GPIO, O_RDONLY);
     char value;
     read(fd, &value, 1);
     close(fd);
     return (value == '0') ? 0 : 1;
+}
+void *send_data(SensorData *data) {
+    CURL *curl = curl_easy_init();
+    if (curl) {
+        char post_data[100];
+        snprintf(post_data, sizeof(post_data),
+                 "{\"humidity\": %.2f, \"temperature\": %.2f, \"unit\": \"%s\"}", 
+                 data->humidity, data->temperature, data->unit);
+
+        curl_easy_setopt(curl, CURLOPT_URL, "https://fast-kid-sterling.ngrok-free.app/data");
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);
+
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_perform(curl);
+
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+    }
+
+    free(data);
+    return NULL;
 }
 
 int main() {
@@ -89,25 +119,15 @@ int main() {
         attroff(COLOR_PAIR(3));
 
         refresh();
+        
+        SensorData *data = (SensorData *)malloc(sizeof(SensorData));
+        data->humidity = humidity;
+        data->temperature = temp_display;
+        strcpy(data->unit, unit);
 
-        CURL *curl = curl_easy_init();
-        if (curl) {
-            char post_data[100];
-            snprintf(post_data, sizeof(post_data),
-                     "{\"humidity\": %.2f, \"temperature\": %.2f, \"unit\": \"%s\"}", humidity, temp_display, unit);
-
-            curl_easy_setopt(curl, CURLOPT_URL, "https://fast-kid-sterling.ngrok-free.app/data");
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);
-
-            struct curl_slist *headers = NULL;
-            headers = curl_slist_append(headers, "Content-Type: application/json");
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-            curl_easy_perform(curl);
-
-            curl_slist_free_all(headers);
-            curl_easy_cleanup(curl);
-        }
+        pthread_t curl_thread;
+        pthread_create(&curl_thread, NULL, send_data, data);
+        pthread_detach(curl_thread);
 
         sleep(1);
     }
