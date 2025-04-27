@@ -94,7 +94,7 @@ int main() {
         if (curl) {
             char post_data[100];
             snprintf(post_data, sizeof(post_data),
-                     "{\"humidity\": %.2f, \"temperature\": %.2f}", humidity, temperature);
+                     "{\"humidity\": %.2f, \"temperature\": %.2f, \"unit\": %s}", humidity, temperature, unit);
 
             curl_easy_setopt(curl, CURLOPT_URL, "https://fast-kid-sterling.ngrok-free.app/data");
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);

@@ -6,4 +6,4 @@ app = FastAPI()
 async def receive_data(request: Request):
     data = await request.json()
     print(f"Humidity: {data['humidity']}%")
-    print(f"Temperature: {data['temperature']}°C")
+    print(f"Temperature: {data['temperature']}°{data['unit']}")
