@@ -1,6 +1,6 @@
 CC      := gcc
 CFLAGS  := -g -Wall
-LDFLAGS := -lcurl -lncurses
+LDFLAGS := -lcurl -lncurses -pthread
 
 TARGET  := final_project
 SRCS    := main.c bbb_dht_read.c bbb_mmio.c common_dht_read.c
