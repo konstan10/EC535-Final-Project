@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#include <pthread.h>
 
 #define UNIT_BUTTON_GPIO "/sys/class/gpio/gpio66/value"
 
@@ -28,7 +29,7 @@ int main() {
     float humidity = 0;
     float temperature = 0;
     int disp_fahr = 0;
-    int last_button_state = 1;
+    int last_button_state = 0;
 
     initscr();
     cbreak();
@@ -69,15 +70,15 @@ int main() {
         mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
 
         attron(COLOR_PAIR(4));
-        mvprintw(3, 4, "Result:        %3d", result);
+        mvprintw(3, 4, "Result:        %d", result);
         attroff(COLOR_PAIR(4));
 
         attron(COLOR_PAIR(2));
-        mvprintw(4, 4, "Humidity:      %6d %%", (int)humidity);
+        mvprintw(4, 4, "Humidity:      %d %%", (int)humidity);
         attroff(COLOR_PAIR(2));
 
         attron(COLOR_PAIR(3));
-        mvprintw(5, 4, "Temperature:   %6.1f deg %s", temp_display, unit);
+        mvprintw(5, 4, "Temperature:   %.1f deg %s", temp_display, unit);
         attroff(COLOR_PAIR(3));
 
         mvprintw(7, 4, "[Refreshing every second]");
