@@ -1,3 +1,4 @@
 - Add heat/comfort index showing how comfortable room is
 - Maybe reimplement button such that interrupt is in kernel-space?
 - Do something like rolling avg of data (collect data for a couple of days, then use it to see what's normal and what's not)
+- Add online/offline button
