@@ -88,12 +88,12 @@ int main() {
     init_pair(3, COLOR_YELLOW, COLOR_BLACK);
     init_pair(4, COLOR_RED, COLOR_BLACK);
     init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(6, COLOR_CYAN, COLOR_BLACK);
 
     curl_global_init(CURL_GLOBAL_ALL);
 
     erase();
     box(stdscr, 0, 0);
-    attron(COLOR_PAIR(5));
     attron(COLOR_PAIR(5));
     mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
     attroff(COLOR_PAIR(5));
@@ -102,8 +102,9 @@ int main() {
     mvprintw(4, 4, "Humidity:");
     mvprintw(5, 4, "Temperature:");
 
+    attron(COLOR_PAIR(6));
     mvprintw(7, 4, "[Refreshing every second]");
-    attroff(COLOR_PAIR(1));
+    attroff(COLOR_PAIR(6));
     refresh();
 
     while (1) {
