@@ -28,7 +28,7 @@ volatile int disp_fahr = 0;
 
 int curr_wifi_button_state = 0;
 int last_wifi_button_state = 0;
-volatile int send_data = 0;
+volatile int use_wifi = 0;
 
 
 int read_unit_button() {
@@ -55,7 +55,7 @@ void *poll_button_state() {
             disp_fahr = !disp_fahr;
         }
         if (last_wifi_button_state == 1 && curr_wifi_button_state == 0) {
-            send_data = !send_data;
+            use_wifi = !use_wifi;
         }
         last_unit_button_state = curr_unit_button_state;
         last_wifi_button_state = curr_wifi_button_state;
@@ -179,7 +179,7 @@ int main() {
 
         refresh();
         
-        if (send_data) {
+        if (use_wifi) {
             SensorData *data = (SensorData *)malloc(sizeof(SensorData));
             data->humidity = humidity;
             data->temperature = temp_display;
