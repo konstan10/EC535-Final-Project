@@ -118,7 +118,7 @@ int main() {
     mvprintw(7, 4, "TVOC:");
 
     attron(COLOR_PAIR(6));
-    mvprintw(11, 0, "[Refreshing every second]");
+    mvprintw(11, 2, "[Refreshing every second]");
     attroff(COLOR_PAIR(6));
     refresh();
 
