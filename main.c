@@ -149,11 +149,11 @@ int main() {
         attroff(COLOR_PAIR(3));
 
         attron(COLOR_PAIR(7));
-        mvprintw(6, 16, "%4d ppm", eCO2);
+        mvprintw(6, 15, "%4d ppm", eCO2);
         attroff(COLOR_PAIR(7));
 
         attron(COLOR_PAIR(4));
-        mvprintw(7, 14, "%4d ppb", TVOC);
+        mvprintw(7, 15, "%4d ppb", TVOC);
         attroff(COLOR_PAIR(4));
 
         refresh();
