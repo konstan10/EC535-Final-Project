@@ -118,7 +118,7 @@ int main() {
     mvprintw(7, 4, "TVOC:");
 
     attron(COLOR_PAIR(6));
-    mvprintw(8, 4, "[Refreshing every second]");
+    mvprintw(11, 0, "[Refreshing every second]");
     attroff(COLOR_PAIR(6));
     refresh();
 
@@ -174,36 +174,3 @@ int main() {
     endwin();
     return 0;
 }
-
-// int main(int argc, char *argv[])
-// {
-// int i;
-// int eCO2, TVOC;
-
-
-// 	// Check which I2C channel you're using
-// 	// Raspberry Pi's usually use channel 1
-// 	// Other ARM boards tend to use channel 0
-// 	i = ccs811Init(2, 0x5A);
-// 	if (i != 0)
-// 	{
-// 		return -1; // problem - quit
-// 	}
-// 	printf("CCS811 device successfully opened.\n");
-// 	printf("Allow 48 hours initial burn-in and 20 minutes to warm up (each use)\n");
-// 	usleep(1000000); // wait for data to settle for first read
-
-// 	for (i=0; i<36000; i++) // read values once every 5 seconds for 30 minutes
-// 	{
-// 		if (ccs811ReadValues(&eCO2, &TVOC))
-// 		{
-// 			printf("eCO2 = %d, TVOC = %d\n", eCO2, TVOC);
-// 		}
-// 		else
-// 			printf("data not ready\n");
-// 		printf("%02d:%02d min:sec have passed\n", (i*5)/60, (i*5) % 60);
-// 		usleep(1000000); // every 5 seconds
-// 	}
-
-// return 0;
-// }
