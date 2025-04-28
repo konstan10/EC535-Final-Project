@@ -12,19 +12,35 @@
 #include <pthread.h>
 
 #define UNIT_BUTTON_GPIO "/sys/class/gpio/gpio66/value"
+#define WIFI_BUTTON_GPIO "/sys/class/gpio/gpio46/value"
 
 typedef struct {
     float humidity;
     float temperature;
     char unit[2];
+    int eCO2;
+    int TVOC;
 } SensorData;
 
-int curr_button_state = 0;
-int last_button_state = 0;
+int curr_unit_button_state = 0;
+int last_unit_button_state = 0;
 volatile int disp_fahr = 0;
 
-int read_button() {
+int curr_wifi_button_state = 0;
+int last_wifi_button_state = 0;
+volatile int send_data = 0;
+
+
+int read_unit_button() {
     int fd = open(UNIT_BUTTON_GPIO, O_RDONLY);
+    char value;
+    read(fd, &value, 1);
+    close(fd);
+    return (value == '0') ? 0 : 1;
+}
+
+int read_online_button() {
+    int fd = open(WIFI_BUTTON_GPIO, O_RDONLY);
     char value;
     read(fd, &value, 1);
     close(fd);
@@ -33,11 +49,16 @@ int read_button() {
 
 void *poll_button_state() {
     while (1) {
-        curr_button_state = read_button();
-        if (last_button_state == 1 && curr_button_state == 0) {
+        curr_unit_button_state = read_unit_button();
+        curr_wifi_button_state = read_online_button();
+        if (last_unit_button_state == 1 && curr_unit_button_state == 0) {
             disp_fahr = !disp_fahr;
         }
-        last_button_state = curr_button_state;
+        if (last_wifi_button_state == 1 && curr_wifi_button_state == 0) {
+            send_data = !send_data;
+        }
+        last_unit_button_state = curr_unit_button_state;
+        last_wifi_button_state = curr_wifi_button_state;
         usleep(100000);
     }
 }
@@ -158,14 +179,18 @@ int main() {
 
         refresh();
         
-        SensorData *data = (SensorData *)malloc(sizeof(SensorData));
-        data->humidity = humidity;
-        data->temperature = temp_display;
-        strcpy(data->unit, unit);
-
-        pthread_t curl_thread;
-        pthread_create(&curl_thread, NULL, send_data, data);
-        pthread_detach(curl_thread);
+        if (send_data) {
+            SensorData *data = (SensorData *)malloc(sizeof(SensorData));
+            data->humidity = humidity;
+            data->temperature = temp_display;
+            strcpy(data->unit, unit);
+            data->eCO2 = eCO2;
+            data->TVOC = TVOC;
+    
+            pthread_t curl_thread;
+            pthread_create(&curl_thread, NULL, send_data, data);
+            pthread_detach(curl_thread);    
+        }
 
         sleep(1);
     }

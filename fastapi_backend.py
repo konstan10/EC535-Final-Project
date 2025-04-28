@@ -7,3 +7,5 @@ async def receive_data(request: Request):
     data = await request.json()
     print(f"Humidity: {data['humidity']}%")
     print(f"Temperature: {data['temperature']}°{data['unit']}")
+    print(f"eCO2: {data['eCO2']}")
+    print(f"TVOC: {data['TVOC']}")
