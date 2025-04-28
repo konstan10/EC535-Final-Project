@@ -127,7 +127,7 @@ int main() {
         int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
         int aq_res = ccs811ReadValues(&eCO2, &TVOC);
 
-        if (result != 0) {
+        if (result != 0 || aq_res != 1) {
             sleep(1);
             continue;
         }
