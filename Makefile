@@ -3,9 +3,9 @@ CFLAGS  := -g -Wall
 LDFLAGS := -lcurl -lncurses -pthread
 
 TARGET  := final_project
-SRCS    := main.c bbb_dht_read.c bbb_mmio.c common_dht_read.c
+SRCS    := main.c bbb_dht_read.c bbb_mmio.c common_dht_read.c ccs811.c
 OBJS    := $(SRCS:.c=.o)
-DEPS    := bbb_dht_read.h bbb_mmio.h common_dht_read.h
+DEPS    := bbb_dht_read.h bbb_mmio.h common_dht_read.h ccs811.h
 
 .PHONY: all clean
 
