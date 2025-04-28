@@ -79,6 +79,11 @@ int main() {
 
     int air_qual_sensor = ccs811Init(2, 0x5A);
 
+    if (air_qual_sensor != 0) {
+        printf("error connecting sensor\n");
+        return 0;
+    }
+
     pthread_t button_thread;
     pthread_create(&button_thread, NULL, poll_button_state, NULL);
     pthread_detach(button_thread);
@@ -120,7 +125,7 @@ int main() {
     while (1) {
         int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
         int aq_res = ccs811ReadValues(&eCO2, &TVOC);
-        
+
         if (result != 0 || aq_res != 0) {
             sleep(1);
             continue;
