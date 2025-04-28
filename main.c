@@ -68,8 +68,8 @@ void *send_data(SensorData *data) {
     if (curl) {
         char post_data[100];
         snprintf(post_data, sizeof(post_data),
-                 "{\"humidity\": %.2f, \"temperature\": %.2f, \"unit\": \"%s\"}", 
-                 data->humidity, data->temperature, data->unit);
+                 "{\"humidity\": %.2f, \"temperature\": %.2f, \"unit\": \"%s\", \"eCO2\": %d, \"TVOC\": %d}", 
+                 data->humidity, data->temperature, data->unit, data->eCO2, data->TVOC);
 
         curl_easy_setopt(curl, CURLOPT_URL, "https://fast-kid-sterling.ngrok-free.app/data");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);
