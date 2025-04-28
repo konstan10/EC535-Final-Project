@@ -112,7 +112,6 @@ int main() {
     mvprintw(1, 2, "BeagleBone Black Smart Environment Monitor");
     attroff(COLOR_PAIR(5));
 
-    mvprintw(3, 4, "Result:");
     mvprintw(4, 4, "Humidity:");
     mvprintw(5, 4, "Temperature:");
     mvprintw(6, 4, "eCO2:");
@@ -141,10 +140,6 @@ int main() {
             strcpy(unit, "C");
         }
 
-        attron(COLOR_PAIR(4));
-        mvprintw(3, 15, "%3d   ", result);
-        attroff(COLOR_PAIR(4));
-
         attron(COLOR_PAIR(2));
         mvprintw(4, 15, "%4d %% ", (int)humidity);
         attroff(COLOR_PAIR(2));
@@ -154,12 +149,12 @@ int main() {
         attroff(COLOR_PAIR(3));
 
         attron(COLOR_PAIR(7));
-        mvprintw(6, 15, "%4d ppm", eCO2);
+        mvprintw(6, 16, "%4d ppm", eCO2);
         attroff(COLOR_PAIR(7));
 
-        attron(COLOR_PAIR(7));
-        mvprintw(7, 15, "%4d ppb", TVOC);
-        attroff(COLOR_PAIR(7));
+        attron(COLOR_PAIR(4));
+        mvprintw(7, 14, "%4d ppb", TVOC);
+        attroff(COLOR_PAIR(4));
 
         refresh();
         
