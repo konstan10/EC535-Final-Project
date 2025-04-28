@@ -206,7 +206,7 @@ int eCO2, TVOC;
 		else
 			printf("data not ready\n");
 		printf("%02d:%02d min:sec have passed\n", (i*5)/60, (i*5) % 60);
-		usleep(5000000); // every 5 seconds
+		usleep(1000000); // every 5 seconds
 	}
 
 return 0;
