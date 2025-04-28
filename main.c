@@ -72,9 +72,12 @@ int main() {
     int type = DHT11;
     int gpio_base = 2;
     int gpio_number = 3;
-
+    
     float humidity = 0;
     float temperature = 0;
+    int eCO2, TVOC;
+
+    int air_qual_sensor = ccs811Init(2, 0x5A);
 
     pthread_t button_thread;
     pthread_create(&button_thread, NULL, poll_button_state, NULL);
@@ -93,6 +96,7 @@ int main() {
     init_pair(4, COLOR_RED, COLOR_BLACK);
     init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
     init_pair(6, COLOR_CYAN, COLOR_BLACK);
+    init_pair(7, COLOR_BLUE, COLOR_BLACK);
 
     curl_global_init(CURL_GLOBAL_ALL);
 
@@ -105,16 +109,19 @@ int main() {
     mvprintw(3, 4, "Result:");
     mvprintw(4, 4, "Humidity:");
     mvprintw(5, 4, "Temperature:");
+    mvprintw(6, 4, "eCO2:");
+    mvprintw(7, 4, "TVOC:");
 
     attron(COLOR_PAIR(6));
-    mvprintw(7, 4, "[Refreshing every second]");
+    mvprintw(8, 4, "[Refreshing every second]");
     attroff(COLOR_PAIR(6));
     refresh();
 
     while (1) {
         int result = bbb_dht_read(type, gpio_base, gpio_number, &humidity, &temperature);
-
-        if (result != 0) {
+        int aq_res = ccs811ReadValues(&eCO2, &TVOC);
+        
+        if (result != 0 || aq_res != 0) {
             sleep(1);
             continue;
         }
@@ -139,6 +146,14 @@ int main() {
         attron(COLOR_PAIR(3));
         mvprintw(5, 17, "%4.1f deg %s", temp_display, unit);
         attroff(COLOR_PAIR(3));
+
+        attron(COLOR_PAIR(7));
+        mvprintw(6, 15, "%4d ppm", eCO2);
+        attroff(COLOR_PAIR(7));
+
+        attron(COLOR_PAIR(7));
+        mvprintw(7, 15, "%4d ppb", TVOC);
+        attroff(COLOR_PAIR(7));
 
         refresh();
         
