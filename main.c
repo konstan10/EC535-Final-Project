@@ -138,9 +138,6 @@ int main() {
     mvprintw(6, 4, "eCO2:");
     mvprintw(7, 4, "TVOC:");
 
-    attron(COLOR_PAIR(6));
-    mvprintw(11, 2, "[Refreshing every second]");
-    attroff(COLOR_PAIR(6));
     refresh();
 
     while (1) {
@@ -176,6 +173,17 @@ int main() {
         attron(COLOR_PAIR(4));
         mvprintw(7, 15, "%4d ppb", TVOC);
         attroff(COLOR_PAIR(4));
+
+        if (use_wifi) {
+            attron(COLOR_PAIR(6));
+            mvprintw(11, 2, "Online (forwarding data to web server)");
+            attroff(COLOR_PAIR(6));
+        }
+        else {
+            attron(COLOR_PAIR(6));
+            mvprintw(11, 2, "Offline (no data being forwarded)");
+            attroff(COLOR_PAIR(6));
+        }
 
         refresh();
         
