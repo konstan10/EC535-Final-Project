@@ -28,7 +28,7 @@ volatile int disp_fahr = 0;
 
 int curr_wifi_button_state = 0;
 int last_wifi_button_state = 0;
-volatile int use_wifi = 0;
+volatile int use_wifi = 1;
 
 
 int read_unit_button() {
