@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Environmental Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .info-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .info-box {
+      flex: 1;
+      min-width: 300px;
+    }
+    .info-box div {
+      font-size: 18px;
+      margin: 8px 0;
+      padding: 8px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .chart-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .chart {
+      width: 48%;
+      height: 300px;
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Temperature, Humidity, eCO<sub>2</sub> & TVOC Dashboard</h1>
+
+  <div class="info-container">
+    <div class="info-box">
+      <div id="averageTemperature">Average Temperature: Loading...</div>
+      <div id="temperatureStdDev">Temperature Std Dev: Loading...</div>
+      <div id="heatIndex">Heat Index: Loading...</div>
+      <div id="classification">Classification: Loading...</div>
+      <div id="effect">Effect on the Body: Loading...</div>
+      <div id="airQualityStatus">Air Quality Status: Loading...</div>
+    </div>
+    <div class="info-box">
+      <div id="currentTemperature">Current Temperature: Loading...</div>
+      <div id="currentHumidity">Current Humidity: Loading...</div>
+      <div id="currentEco2">Current eCO<sub>2</sub>: Loading...</div>
+      <div id="currentTvoc">Current TVOC: Loading...</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart">
+      <h2>Temperature</h2>
+      <canvas id="temperatureChart"></canvas>
+    </div>
+    <div class="chart">
+      <h2>Humidity</h2>
+      <canvas id="humidityChart"></canvas>
+    </div>
+    <div class="chart">
+      <h2>eCO<sub>2</sub> (ppm)</h2>
+      <canvas id="eco2Chart"></canvas>
+    </div>
+    <div class="chart">
+      <h2>TVOC (ppb)</h2>
+      <canvas id="tvocChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const temperatureData = [];
+    const humidityData = [];
+    const eco2Data = [];
+    const tvocData = [];
+    const timeLabels = [];
+
+    const tempChart = new Chart(document.getElementById('temperatureChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: 'Temperature (degrees Celsius)',
+          data: temperatureData,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          fill: false,
+        }],
+      },
+      options: { scales: { x: { display: false }, y: { beginAtZero: true } } },
+    });
+
+    const humidityChart = new Chart(document.getElementById('humidityChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: 'Humidity (%)',
+          data: humidityData,
+          borderColor: 'rgba(54, 162, 235, 1)',
+          fill: false,
+        }],
+      },
+      options: { scales: { x: { display: false }, y: { beginAtZero: true } } },
+    });
+
+    const eco2Chart = new Chart(document.getElementById('eco2Chart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: 'eCO2 (ppm)',
+          data: eco2Data,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false,
+        }],
+      },
+      options: { scales: { x: { display: false }, y: { beginAtZero: true } } },
+    });
+
+    const tvocChart = new Chart(document.getElementById('tvocChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: 'TVOC (ppb)',
+          data: tvocData,
+          borderColor: 'rgba(153, 102, 255, 1)',
+          fill: false,
+        }],
+      },
+      options: { scales: { x: { display: false }, y: { beginAtZero: true } } },
+    });
+
+    function calculateHeatIndex(T, RH) {
+      T = T * 9 / 5 + 32;
+      let HI_simple = 0.5 * (T + 61.0 + ((T - 68.0) * 1.2) + (RH * 0.094));
+      let HI = (HI_simple + T) / 2;
+
+      if (HI >= 80) {
+        HI = -42.379 + 2.04901523 * T + 10.14333127 * RH - 0.22475541 * T * RH
+          - 0.00683783 * T * T - 0.05481717 * RH * RH
+          + 0.00122874 * T * T * RH + 0.00085282 * T * RH * RH
+          - 0.00000199 * T * T * RH * RH;
+
+        if (RH < 13 && T >= 80 && T <= 112) {
+          HI -= ((13 - RH) / 4) * Math.sqrt((17 - Math.abs(T - 95)) / 17);
+        }
+
+        if (RH > 85 && T >= 80 && T <= 87) {
+          HI += ((RH - 85) / 10) * ((87 - T) / 5);
+        }
+      }
+
+      HI = (HI - 32) * 5 / 9;
+      return HI.toFixed(1);
+    }
+
+    function classifyHeatIndex(HI) {
+      let classification = '', effect = '', backgroundColor = '';
+      HI = parseFloat(HI);
+
+      if (HI >= 52) {
+        classification = 'Extreme Danger';
+        effect = 'Heat stroke highly likely';
+        backgroundColor = 'darkred';
+      } else if (HI >= 39) {
+        classification = 'Danger';
+        effect = 'Heat cramps/exhaustion likely';
+        backgroundColor = 'red';
+      } else if (HI >= 32) {
+        classification = 'Extreme Caution';
+        effect = 'Possible cramps/exhaustion';
+        backgroundColor = 'orange';
+      } else if (HI >= 27) {
+        classification = 'Caution';
+        effect = 'Fatigue possible';
+        backgroundColor = 'yellow';
+      } else {
+        classification = 'Normal';
+        effect = 'No immediate danger';
+        backgroundColor = 'lightgreen';
+      }
+
+      document.getElementById('classification').innerText = `Classification: ${classification}`;
+      document.getElementById('effect').innerText = `Effect on the Body: ${effect}`;
+      document.getElementById('classification').style.backgroundColor = backgroundColor;
+      document.getElementById('effect').style.backgroundColor = backgroundColor;
+    }
+
+    function evaluateAirQuality(eco2, tvoc) {
+      let status = '', message = '', backgroundColor = '';
+
+      if (eco2 > 2000 || tvoc > 500) {
+        status = 'Very Unhealthy';
+        backgroundColor = 'darkred';
+      } else if (eco2 > 1500 || tvoc > 400) {
+        status = 'Unhealthy';
+        backgroundColor = 'red';
+      } else if (eco2 > 1000 || tvoc > 300) {
+        status = 'Moderate';
+        backgroundColor = 'orange';
+      } else {
+        status = 'Good';
+        backgroundColor = 'lightgreen';
+      }
+
+      document.getElementById('airQualityStatus').innerText = `Air Quality Status: ${status}`;
+      document.getElementById('airQualityStatus').style.backgroundColor = backgroundColor;
+    }
+
+    async function fetchData() {
+      try {
+        const response = await fetch('http://localhost:8000/data');
+        const data = await response.json();
+
+        const now = new Date().toLocaleTimeString();
+        timeLabels.push(now);
+        temperatureData.push(data.temperature);
+        humidityData.push(data.humidity);
+        eco2Data.push(data.eco2);
+        tvocData.push(data.tvoc);
+
+        document.getElementById('currentTemperature').innerHTML = `Current Temperature: ${data.temperature} &deg;C`;
+        document.getElementById('currentHumidity').innerText = `Current Humidity: ${data.humidity} %`;
+        document.getElementById('currentEco2').innerHTML = `Current eCO<sub>2</sub>: ${data.eco2} ppm`;
+        document.getElementById('currentTvoc').innerText = `Current TVOC: ${data.tvoc} ppb`;
+
+        const heatIndex = calculateHeatIndex(data.temperature, data.humidity);
+        document.getElementById('heatIndex').innerHTML = `Heat Index: ${heatIndex} &deg;C`;
+        classifyHeatIndex(heatIndex);
+        evaluateAirQuality(data.eco2, data.tvoc);
+
+        if (timeLabels.length > 6) {
+          timeLabels.shift();
+          temperatureData.shift();
+          humidityData.shift();
+          eco2Data.shift();
+          tvocData.shift();
+        }
+
+        tempChart.update();
+        humidityChart.update();
+        eco2Chart.update();
+        tvocChart.update();
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    async function fetchAverageTemperature() {
+      try {
+        const response = await fetch('http://localhost:8000/average-temperature');
+        const data = await response.json();
+        document.getElementById('averageTemperature').innerHTML = `Average Temperature: ${data.average_temperature} &deg;C`;
+      } catch (error) {
+        console.error('Error fetching average temperature:', error);
+      }
+    }
+
+    async function fetchTemperatureStdDev() {
+      try {
+        const response = await fetch('http://localhost:8000/temperature-stddev');
+        const data = await response.json();
+        document.getElementById('temperatureStdDev').innerText = `Temperature Std Dev: ${data.temperature_stddev}`;
+      } catch (error) {
+        console.error('Error fetching std dev:', error);
+      }
+    }
+
+    setInterval(fetchData, 5000);
+    setInterval(fetchAverageTemperature, 5000);
+    setInterval(fetchTemperatureStdDev, 5000);
+    fetchData();
+    fetchAverageTemperature();
+    fetchTemperatureStdDev();
+  </script>
+</body>
+</html>
