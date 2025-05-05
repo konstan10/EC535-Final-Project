@@ -226,7 +226,7 @@
 
     async function fetchData() {
       try {
-        const response = await fetch('http://localhost:8000/data');
+        const response = await fetch('http://localhost:8000/latest-data');
         const data = await response.json();
 
         const now = new Date().toLocaleTimeString();
