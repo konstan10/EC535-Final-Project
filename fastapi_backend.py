@@ -5,6 +5,7 @@ from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from pymongo import DESCENDING
 from datetime import datetime
 from database import collection
 from math import sqrt
@@ -48,6 +49,20 @@ async def receive_data(request: Request):
 async def serve_chart():
     with open("index.html", "r") as f:
         return HTMLResponse(content=f.read())
+    
+@app.get("/latest-data")
+async def get_latest_data():
+    document = await collection.find_one(sort=[("timestamp", DESCENDING)])
+    if not document:
+        return {"temperature": None, "humidity": None, "eco2": None, "tvoc": None}
+
+    return {
+        "temperature": document["temperature"],
+        "humidity": document["humidity"],
+        "eco2": document["eco2"],
+        "tvoc": document["tvoc"],
+        "timestamp": document["timestamp"]
+    }
 
 @app.get("/temperature-stddev")
 async def temperature_stddev():
