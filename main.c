@@ -181,7 +181,7 @@ int main() {
         }
         else {
             attron(COLOR_PAIR(6));
-            mvprintw(11, 2, "Offline (no data being forwarded)");
+            mvprintw(11, 2, "Offline (no data being forwarded)     ");
             attroff(COLOR_PAIR(6));
         }
 
