@@ -1,3 +1,5 @@
+Link to demo: https://youtu.be/GnkTK4IswFQ
+
 Helpful resources:
 
 - BeagleBone Black Pinout: https://toptechboy.com/wp-content/uploads/2015/06/beaglebone-black-pinout.jpg
